@@ -8,7 +8,6 @@ import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.support.WebExchangeBindException;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
@@ -30,9 +29,7 @@ public class Handler {
                 .flatMap(userUseCase::registerUser)
                 .flatMap(savedUser -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(savedUser))
-                .onErrorResume(WebExchangeBindException.class,
-                        e -> ServerResponse.badRequest().bodyValue(e.getAllErrors()));
+                        .bodyValue(savedUser));
     }
 
     private <T> Mono<T> validate(T object) {
