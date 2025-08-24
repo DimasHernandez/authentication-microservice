@@ -35,11 +35,8 @@ public class UserUseCase {
         user.activate();
         user.markCreatedNow();
 
-        System.out.println("method -> assignApplicationRoleAndSave y el rol enviado a la BD: " + RoleType.APPLICANT.getName());
-
         return rolRepository
                 .findRoleByName(RoleType.APPLICANT)
-                .doOnNext(role -> System.out.println("role despues consulta: " + role.getRoleType()))
                 .switchIfEmpty(Mono.error(new RoleNotFoundException("Role not found")))
                 .flatMap(role -> {
                     user.setRoleId(role.getId());

@@ -9,11 +9,13 @@ import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Repository
 public class RoleReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         Role,
         RoleEntity,
-        String,
+        UUID,
         RoleReactiveRepository> implements RolRepository {
 
     public RoleReactiveRepositoryAdapter(RoleReactiveRepository repository, ObjectMapper mapper) {

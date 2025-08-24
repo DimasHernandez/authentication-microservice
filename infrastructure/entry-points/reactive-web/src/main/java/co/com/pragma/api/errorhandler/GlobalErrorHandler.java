@@ -3,6 +3,7 @@ package co.com.pragma.api.errorhandler;
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.io.buffer.DataBuffer;
@@ -51,6 +52,13 @@ public class GlobalErrorHandler implements WebExceptionHandler {
             response.setStatusCode(HttpStatus.NOT_FOUND);
             return response.writeWith(
                     Mono.just(toBuffer(response, "Business error", HttpStatus.NOT_FOUND.value(),
+                            ex.getMessage())));
+        }
+
+        if (ex instanceof IllegalArgumentException) {
+            response.setStatusCode(HttpStatus.BAD_REQUEST);
+            return response.writeWith(
+                    Mono.just(toBuffer(response, "Validation failed", HttpStatus.BAD_REQUEST.value(),
                             ex.getMessage())));
         }
 

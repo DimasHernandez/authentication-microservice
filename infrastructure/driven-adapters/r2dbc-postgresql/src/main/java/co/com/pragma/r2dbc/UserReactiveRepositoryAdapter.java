@@ -9,11 +9,13 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.UUID;
+
 @Repository
 public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
         User,
         UserEntity,
-        String,
+        UUID,
         UserReactiveRepository
         > implements UserRepository {
     public UserReactiveRepositoryAdapter(UserReactiveRepository repository, ObjectMapper mapper) {
