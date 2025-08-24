@@ -5,6 +5,7 @@ import co.com.pragma.model.exceptions.RoleNotFoundException;
 import co.com.pragma.model.rol.enums.RoleType;
 import co.com.pragma.model.rol.gateways.RolRepository;
 import co.com.pragma.model.user.User;
+import co.com.pragma.model.user.gateways.LoggerRepository;
 import co.com.pragma.model.user.gateways.TransactionalWrapper;
 import co.com.pragma.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ public class UserUseCase {
 
     private final TransactionalWrapper transactionalWrapper;
 
+    private final LoggerRepository logger;
+
     public Mono<User> registerUser(User user) {
 
         return transactionalWrapper.transactional(
@@ -27,7 +30,8 @@ public class UserUseCase {
                             if (Boolean.TRUE.equals(emailExists)) {
                                 return Mono.error(new EmailAlreadyRegisteredException("The email address is already registered."));
                             }
-                            return assignApplicationRoleAndSave(user);
+                            return assignApplicationRoleAndSave(user)
+                                    .doOnSuccess(userSaved -> logger.info("User with id {} registered successfully", userSaved.getId()));
                         }));
     }
 
