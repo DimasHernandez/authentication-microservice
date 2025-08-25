@@ -27,9 +27,10 @@ public class Handler {
                 .flatMap(this::validate)
                 .map(userMapper::toDomain)
                 .flatMap(userUseCase::registerUser)
-                .flatMap(savedUser -> ServerResponse.ok()
+                .map(userMapper::toResponse)
+                .flatMap(userResponse -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
-                        .bodyValue(savedUser));
+                        .bodyValue(userResponse));
     }
 
     private <T> Mono<T> validate(T object) {

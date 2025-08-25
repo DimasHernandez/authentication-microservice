@@ -46,6 +46,15 @@ Este módulo es el más externo de la arquitectura, es el encargado de ensamblar
 
 **Los beans de los casos de uso se disponibilizan automaticamente gracias a un '@ComponentScan' ubicado en esta capa.**
 
+## 📖 Documentación del API
+
+La documentación del API se genera automáticamente con **springdoc-openapi**.
+
+- **Swagger UI (interfaz gráfica):**  
+  👉 [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+
+- **OpenAPI JSON (especificación en formato JSON):**  
+  👉 [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
 ## Notas Importantes
 ### 📌 Inyección de beans en los casos de uso (Clean Architecture + Plugin Bancolombia)

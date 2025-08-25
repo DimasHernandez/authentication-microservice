@@ -1,6 +1,7 @@
 package co.com.pragma.api.mapper;
 
 import co.com.pragma.api.dto.UserRequest;
+import co.com.pragma.api.dto.UserResponse;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.enums.DocumentType;
 import org.mapstruct.Mapper;
@@ -16,6 +17,8 @@ public interface UserMapper {
     @Mapping(target = "roleId", ignore = true)
     @Mapping(target = "documentType", source = "documentType", qualifiedByName = "stringToRolType")
     User toDomain(UserRequest userRequest);
+
+    UserResponse  toResponse(User user);
 
     @Named("stringToRolType")
     default DocumentType mapStringToDocumentType(String documentType) {
