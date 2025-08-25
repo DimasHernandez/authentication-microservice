@@ -28,10 +28,12 @@ public class UserUseCase {
                 userRepository.existsUserEmail(user.getEmail())
                         .flatMap(emailExists -> {
                             if (Boolean.TRUE.equals(emailExists)) {
-                                return Mono.error(new EmailAlreadyRegisteredException("The email address is already registered."));
+                                return Mono.error(
+                                        new EmailAlreadyRegisteredException("The email address is already registered."));
                             }
                             return assignApplicationRoleAndSave(user)
-                                    .doOnSuccess(userSaved -> logger.info("User with id {} registered successfully", userSaved.getId()));
+                                    .doOnSuccess(userSaved ->
+                                            logger.info("User with id {} registered successfully", userSaved.getId()));
                         }));
     }
 
