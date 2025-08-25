@@ -6,7 +6,6 @@ import co.com.pragma.r2dbc.entities.UserEntity;
 import co.com.pragma.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -24,11 +23,10 @@ public class UserReactiveRepositoryAdapter extends ReactiveAdapterOperations<
          *  super(repository, mapper, d -> mapper.mapBuilder(d,ObjectModel.ObjectModelBuilder.class).build());
          *  Or using mapper.map with the class of the object model
          */
-        super(repository, mapper, d -> mapper.map(d, User.class));
+        super(repository, mapper, userEntity -> mapper.map(userEntity, User.class));
     }
 
     @Override
-    @Transactional
     public Mono<User> registerUser(User user) {
         return super.save(user);
     }
