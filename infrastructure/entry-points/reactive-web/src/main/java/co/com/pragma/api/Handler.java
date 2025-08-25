@@ -3,6 +3,7 @@ package co.com.pragma.api;
 import co.com.pragma.api.dto.UserRequest;
 import co.com.pragma.api.mapper.UserMapper;
 import co.com.pragma.usecase.user.UserUseCase;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Mono;
+
+import java.net.URI;
+import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -23,21 +27,21 @@ public class Handler {
     private final UserMapper userMapper;
 
     public Mono<ServerResponse> listenRegisterUser(ServerRequest serverRequest) {
+        URI location = serverRequest.uri();
         return serverRequest.bodyToMono(UserRequest.class)
-                .flatMap(this::validate)
+                .flatMap(userRequest -> {
+                    Set<ConstraintViolation<UserRequest>> violations = validator.validate(userRequest);
+                    if (!violations.isEmpty()) {
+                        return Mono.error(new ConstraintViolationException(violations));
+                    }
+                    return Mono.just(userRequest);
+                })
                 .map(userMapper::toDomain)
                 .flatMap(userUseCase::registerUser)
                 .map(userMapper::toResponse)
-                .flatMap(userResponse -> ServerResponse.ok()
+                .flatMap(userResponse -> ServerResponse
+                        .created(location)
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(userResponse));
-    }
-
-    private <T> Mono<T> validate(T object) {
-        var errors = validator.validate(object);
-        if (!errors.isEmpty()) {
-            return Mono.error(new ConstraintViolationException(errors));
-        }
-        return Mono.just(object);
     }
 }

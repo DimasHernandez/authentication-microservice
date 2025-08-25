@@ -34,14 +34,14 @@ public class User {
 
     private Integer baseSalary;
 
-    private boolean isActive;
+    private boolean active;
 
     private LocalDate createdAt;
 
     private UUID roleId;
 
     public void activate() {
-        this.isActive = true;
+        this.active = true;
     }
 
     public void markCreatedNow() {

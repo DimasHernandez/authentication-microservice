@@ -12,13 +12,13 @@ import org.mapstruct.Named;
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "isActive", ignore = true)
+    @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "roleId", ignore = true)
     @Mapping(target = "documentType", source = "documentType", qualifiedByName = "stringToRolType")
     User toDomain(UserRequest userRequest);
 
-    UserResponse  toResponse(User user);
+    UserResponse toResponse(User user);
 
     @Named("stringToRolType")
     default DocumentType mapStringToDocumentType(String documentType) {

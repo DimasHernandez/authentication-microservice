@@ -16,6 +16,9 @@ public record UserRequest(
         @NotBlank(message = "La dirección es obligatoria obligatorio") String address,
         @NotBlank(message = "El numero del telefono es obligatorio")
         @Pattern(regexp = "\\d{10}", message = "El teléfono debe tener 10 dígitos") String phoneNumber,
-        @NotNull(message = "El salario es obligatorio") @Min(0) @Max(15000000) Integer baseSalary
+        @NotNull(message = "El salario es obligatorio")
+        @Min(value = 0, message = "El salario no puede ser inferior a cero")
+        @Max(value = 15000000, message = "El salario no puede ser superior a 15000000")
+        Integer baseSalary
 ) {
 }

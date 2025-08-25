@@ -123,7 +123,7 @@ class UserUseCaseTest {
                 .address("Cr 5 N° 798")
                 .phoneNumber("3124567890")
                 .baseSalary(2100000)
-                .isActive(true)
+                .active(true)
                 .createdAt(LocalDate.now())
                 .roleId(UUID.fromString("65c9bbc9-d240-4ed0-a2f7-91d7297c1315"))
                 .build();

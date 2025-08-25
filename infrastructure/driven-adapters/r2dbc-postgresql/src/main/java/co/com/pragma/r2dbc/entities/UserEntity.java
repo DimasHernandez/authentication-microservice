@@ -1,10 +1,7 @@
 package co.com.pragma.r2dbc.entities;
 
 import co.com.pragma.model.user.enums.DocumentType;
-
-
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;

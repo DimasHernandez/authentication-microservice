@@ -16,7 +16,7 @@ public record UserResponse(
         String address,
         String phoneNumber,
         Integer baseSalary,
-        boolean isActive,
+        boolean active,
         LocalDate createdAt,
         UUID roleId
 ) {
