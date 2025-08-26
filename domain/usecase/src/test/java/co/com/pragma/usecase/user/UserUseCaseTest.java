@@ -2,6 +2,7 @@ package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
+import co.com.pragma.model.exceptions.UserNotFoundException;
 import co.com.pragma.model.rol.Role;
 import co.com.pragma.model.rol.enums.RoleType;
 import co.com.pragma.model.rol.gateways.RolRepository;
@@ -86,7 +87,7 @@ class UserUseCaseTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
                         throwable instanceof RoleNotFoundException &&
-                                throwable.getMessage().equals("Role not found"))
+                                throwable.getMessage().equals("Rol no encontrado"))
                 .verify();
     }
 
@@ -107,8 +108,48 @@ class UserUseCaseTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
                         throwable instanceof EmailAlreadyRegisteredException &&
-                                throwable.getMessage().equals("The email address is already registered."))
+                                throwable.getMessage().equals("La direccion del correo electronico ya esta registrada."))
                 .verify();
+    }
+
+    @Test
+    void shouldReturnUserByDocumentIdentity() {
+        // Arrangle
+        String documentNumber = "1765420";
+        User user = userMock();
+
+        // Mock reactive repository
+        when(userRepository.getUserByDocumentIdentity(any(String.class))).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<User> result = userUseCase.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(userFound ->
+                        userFound.getId().equals(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353")) &&
+                                userFound.getName().equals("Pepe") &&
+                                userFound.getEmail().equals("pepe@gmail.com"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldReturnUserNotFoundExceptionFails() {
+        // Arrangle
+        String documentNumber = "555";
+
+        // Mock reactive repository
+        when(userRepository.getUserByDocumentIdentity(any(String.class))).thenReturn(Mono.empty());
+
+        // Act
+        Mono<User> result = userUseCase.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof UserNotFoundException &&
+                                throwable.getMessage().equals("Usuario no encontrado")
+                ).verify();
     }
 
     private User userMock() {

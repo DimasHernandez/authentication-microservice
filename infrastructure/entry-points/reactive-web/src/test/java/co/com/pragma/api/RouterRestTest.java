@@ -2,10 +2,12 @@ package co.com.pragma.api;
 
 import co.com.pragma.api.config.ConfigBeansTest;
 import co.com.pragma.api.config.UserPath;
+import co.com.pragma.api.dto.UserInfoResponse;
 import co.com.pragma.api.dto.UserRequest;
 import co.com.pragma.api.dto.UserResponse;
 import co.com.pragma.api.errorhandler.GlobalErrorHandler;
 import co.com.pragma.api.mapper.UserMapper;
+import co.com.pragma.model.exceptions.UserNotFoundException;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.enums.DocumentType;
 import co.com.pragma.usecase.user.UserUseCase;
@@ -112,7 +114,7 @@ class RouterRestTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .consumeWith(System.out::println)
-                .jsonPath("$.error").isEqualTo("Validation failed")
+                .jsonPath("$.error").isEqualTo("Fallo validacion")
                 .jsonPath("$.status").isEqualTo(422)
                 .jsonPath("$.detail").isEqualTo("null: El nombre es obligatorio");
     }
@@ -154,14 +156,54 @@ class RouterRestTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .consumeWith(System.out::println)
-                .jsonPath("$.error").isEqualTo("Validation failed")
+                .jsonPath("$.error").isEqualTo("Fallo validacion")
                 .jsonPath("$.status").isEqualTo(422)
                 .jsonPath("$.detail").isEqualTo("null: El salario no puede ser superior a 15000000");
     }
 
     @Test
+    void shouldGetUserByDocumentIdentity() {
+        // Arrange
+        String documentNumber = "1234567";
+        User user = userMock();
+        UserInfoResponse userInfoResponse = userInfoResponseMock();
+
+        when(userUseCase.getUserByDocumentIdentity(documentNumber)).thenReturn(Mono.just(user));
+        when(userMapper.toInfoResponse(any(User.class))).thenReturn(userInfoResponse);
+
+        webTestClient.get()
+                .uri("/api/v1/users/" + documentNumber)
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(UserInfoResponse.class)
+                .value(response ->
+                        Assertions.assertThat(response.documentNumber()).isEqualTo(documentNumber));
+    }
+
+    @Test
+    void shouldThrowableUserNotFoundException() {
+        // Arrange
+        String documentNumber = "2020";
+
+        when(userUseCase.getUserByDocumentIdentity(documentNumber))
+                .thenReturn(Mono.error(new UserNotFoundException("Usuario no encontrado")));
+
+        webTestClient.get()
+                .uri("/api/v1/users/" + documentNumber)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.error").isEqualTo("Error de negocio")
+                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.detail").isEqualTo("Usuario no encontrado");
+    }
+
+    @Test
     void shouldLoadUserPathProperties() {
         assertEquals("/api/v1/users", userPath.getUsers());
+        assertEquals("/api/v1/users/{documentNumber}", userPath.getUserByDocumentNumber());
     }
 
     private User userMock() {
@@ -211,6 +253,20 @@ class RouterRestTest {
                 true,
                 LocalDate.now(),
                 UUID.fromString("65c9bbc9-d240-4ed0-a2f7-91d7297c1315")
+        );
+    }
+
+    private UserInfoResponse userInfoResponseMock() {
+        return new UserInfoResponse(
+                UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353"),
+                "Pepe",
+                "Perez",
+                "pepe@gmail.com",
+                DocumentType.DNI,
+                "1234567",
+                "Cr 5 N° 798",
+                "3124567890",
+                2100000
         );
     }
 }
