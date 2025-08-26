@@ -13,6 +13,6 @@ public record UserInfoResponse(
         String documentNumber,
         String address,
         String phoneNumber,
-        String baseSalary
+        Integer baseSalary
 ) {
 }
