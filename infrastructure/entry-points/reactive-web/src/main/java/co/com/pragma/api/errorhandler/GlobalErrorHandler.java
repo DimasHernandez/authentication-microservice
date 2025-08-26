@@ -3,6 +3,7 @@ package co.com.pragma.api.errorhandler;
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
+import co.com.pragma.model.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -57,6 +58,14 @@ public class GlobalErrorHandler implements WebExceptionHandler {
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
                                     false, "EmailAlreadyRegisteredException")));
+        }
+
+        if (ex instanceof UserNotFoundException) {
+            response.setStatusCode(HttpStatus.NOT_FOUND);
+            return response.writeWith(
+                    Mono.just(toBuffer(response, BUSINESS_ERROR, HttpStatus.NOT_FOUND.value(), ex.getMessage()))
+                            .doOnNext(buffer -> logException(exchange, ex, HttpStatus.NOT_FOUND,
+                                    false, "UserNotFoundException")));
         }
 
         if (ex instanceof RoleNotFoundException) {

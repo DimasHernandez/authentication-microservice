@@ -44,4 +44,14 @@ public class Handler {
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(userResponse));
     }
+
+    public Mono<ServerResponse> listenGetUserByDocumentIdentity(ServerRequest serverRequest) {
+        String documentNumber = serverRequest.pathVariable("documentNumber");
+        return userUseCase.getUserByDocumentIdentity(documentNumber)
+                .map(userMapper::toInfoResponse)
+                .flatMap(userInfoResponse ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(userInfoResponse));
+    }
 }

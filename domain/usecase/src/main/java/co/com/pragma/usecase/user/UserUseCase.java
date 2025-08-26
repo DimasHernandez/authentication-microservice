@@ -2,6 +2,7 @@ package co.com.pragma.usecase.user;
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
+import co.com.pragma.model.exceptions.UserNotFoundException;
 import co.com.pragma.model.rol.enums.RoleType;
 import co.com.pragma.model.rol.gateways.RolRepository;
 import co.com.pragma.model.user.User;
@@ -48,5 +49,11 @@ public class UserUseCase {
                     user.setRoleId(role.getId());
                     return userRepository.registerUser(user);
                 });
+    }
+
+    public Mono<User> getUserByDocumentIdentity(String documentNumber) {
+        return userRepository.getUserByDocumentIdentity(documentNumber)
+                .doOnNext(user -> logger.info("User with id {} found successfully", user.getId()))
+                .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")));
     }
 }

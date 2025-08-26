@@ -10,4 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class UserPath {
 
     private String users;
+
+    private String userByDocumentNumber;
 }

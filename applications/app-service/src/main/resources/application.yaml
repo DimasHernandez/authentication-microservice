@@ -25,6 +25,7 @@ cors:
 routes:
   paths:
     users: "/api/v1/users"
+    userByDocumentNumber: "/api/v1/users/{documentNumber}"
 adapters:
   r2dbc:
     host: "localhost"

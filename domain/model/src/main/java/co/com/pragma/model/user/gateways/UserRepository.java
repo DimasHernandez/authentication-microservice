@@ -8,4 +8,6 @@ public interface UserRepository {
     Mono<User> registerUser(User user);
 
     Mono<Boolean> existsUserEmail(String email);
+
+    Mono<User> getUserByDocumentIdentity(String documentNumber);
 }
