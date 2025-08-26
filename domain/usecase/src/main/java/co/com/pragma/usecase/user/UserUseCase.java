@@ -29,7 +29,7 @@ public class UserUseCase {
                         .flatMap(emailExists -> {
                             if (Boolean.TRUE.equals(emailExists)) {
                                 return Mono.error(
-                                        new EmailAlreadyRegisteredException("The email address is already registered."));
+                                        new EmailAlreadyRegisteredException("La direccion del correo electronico ya esta registrada."));
                             }
                             return assignApplicationRoleAndSave(user)
                                     .doOnSuccess(userSaved ->
@@ -43,7 +43,7 @@ public class UserUseCase {
 
         return rolRepository
                 .findRoleByName(RoleType.APPLICANT)
-                .switchIfEmpty(Mono.error(new RoleNotFoundException("Role not found")))
+                .switchIfEmpty(Mono.error(new RoleNotFoundException("Rol no encontrado")))
                 .flatMap(role -> {
                     user.setRoleId(role.getId());
                     return userRepository.registerUser(user);

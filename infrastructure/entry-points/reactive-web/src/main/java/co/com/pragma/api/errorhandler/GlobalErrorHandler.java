@@ -23,8 +23,8 @@ import java.nio.charset.StandardCharsets;
 @Order(-2)
 public class GlobalErrorHandler implements WebExceptionHandler {
 
-    private static final String VALIDATION_FAILED = "Validation failed";
-    private static final String BUSINESS_ERROR = "Business error";
+    private static final String VALIDATION_FAILED = "Fallo validacion";
+    private static final String BUSINESS_ERROR = "Error de negocio";
     private static final String UNIQUE_DOCUMENT_NUMBER_DB = "users_document_number_key";
 
     @Override
@@ -86,7 +86,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
                 response.setStatusCode(HttpStatus.CONFLICT);
                 return response.writeWith(
                         Mono.just(toBuffer(response, "Conflict", HttpStatus.CONFLICT.value(),
-                                        "document is already registered"))
+                                        "Documento de identidad ya esta registrado"))
                                 .doOnNext(buffer ->
                                         log.warn("DuplicateKeyException Constrain violation detected: " +
                                                         "field document_number duplicated [{} {}]: {}",

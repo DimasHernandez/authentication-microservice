@@ -125,3 +125,75 @@ public class UserUseCase {
 - El bean TransactionalOperator se declara en infraestructura y se inyecta a través del adaptador.
 
 - Si cambiamos el motor de base de datos o incluso el framework, el dominio no se rompe.
+
+### ⚡ Manejo de Transacciones en WebFlux
+En este proyecto se implementa un mecanismo de transacciones de forma ```reactiva``` usando ```Spring WebFlux + R2DBC```.
+A diferencia de los proyectos imperativos con JPA (donde se usa la anotación ```@Transactional```), en el mundo reactivo esa anotación no funciona, porque rompe el modelo no bloqueante.
+
+🔹 ```Clase``` TransactionalWrapperImpl
+
+Para mantener la atomicidad de las operaciones en base de datos, se creó un adaptador que implementa el puerto secundario TransactionalWrapper.
+
+```
+@Component
+public class TransactionalWrapperImpl implements TransactionalWrapper {
+
+    private final TransactionalOperator transactionalOperator;
+
+    TransactionalWrapperImpl(TransactionalOperator transactionalOperator) {
+        this.transactionalOperator = transactionalOperator;
+    }
+
+    @Override
+    public <T> Mono<T> transactional(Mono<T> publisher) {
+        return publisher.as(transactionalOperator::transactional);
+    }
+}
+```
+
+#### 🔹 ¿Cómo se usa?
+
+En un caso de uso, simplemente se envuelve el flujo reactivo con el transactionalWrapper para garantizar que todas las operaciones se ejecuten en una transacción:
+
+```
+public Mono<User> registerUser(User user) {
+
+        return transactionalWrapper.transactional(
+                userRepository.existsUserEmail(user.getEmail())
+                        .flatMap(emailExists -> {
+                            if (Boolean.TRUE.equals(emailExists)) {
+                                return Mono.error(
+                                        new EmailAlreadyRegisteredException("La direccion del correo electronico ya esta registrada."));
+                            }
+                            return assignApplicationRoleAndSave(user)
+                                    .doOnSuccess(userSaved ->
+                                            logger.info("User with id {} registered successfully", userSaved.getId()));
+                        }));
+    }
+
+    private Mono<User> assignApplicationRoleAndSave(User user) {
+        user.activate();
+        user.markCreatedNow();
+
+        return rolRepository
+                .findRoleByName(RoleType.APPLICANT)
+                .switchIfEmpty(Mono.error(new RoleNotFoundException("Rol no encontrado")))
+                .flatMap(role -> {
+                    user.setRoleId(role.getId());
+                    return userRepository.registerUser(user);
+                });
+    }
+```
+- ✅ Si alguna de las operaciones falla, la transacción se revierte (```rollback```).
+- ✅ Si todo se ejecuta correctamente, la transacción se confirma (```commit```).
+
+#### 🔹 En los tests
+
+Como no se necesita una transacción real en los tests unitarios, el ```TransactionalWrapper``` se mockea para devolver el ```Mono``` original:
+
+```
+when(transactionalWrapper.transactional(any(Mono.class)))
+    .thenAnswer(invocation -> invocation.getArgument(0));
+
+```
+De esta forma, las pruebas no dependen del comportamiento transaccional de la base de datos.
