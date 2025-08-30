@@ -17,7 +17,6 @@ import org.springdoc.core.annotations.RouterOperations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
@@ -27,11 +26,11 @@ import static org.springframework.web.reactive.function.server.RouterFunctions.r
 
 @Configuration
 @RequiredArgsConstructor
-public class RouterRest {
+public class UserRouterRest {
 
     private final UserPath userPath;
 
-    private final Handler userHandler;
+    private final UserHandler userHandler;
 
     @Bean
     @RouterOperations({
@@ -39,7 +38,7 @@ public class RouterRest {
                     path = "/api/v1/users",
                     produces = {"application/json"},
                     method = RequestMethod.POST,
-                    beanClass = Handler.class,
+                    beanClass = UserHandler.class,
                     beanMethod = "listenRegisterUser",
                     operation = @Operation(
                             operationId = "registerUser",
@@ -52,7 +51,7 @@ public class RouterRest {
                                     content = @Content(schema = @Schema(implementation = UserRequest.class))
                             ),
                             responses = {
-                                    @ApiResponse(responseCode = "200", description = "User registered successfully",
+                                    @ApiResponse(responseCode = "201", description = "User registered successfully",
                                             content = @Content(schema = @Schema(implementation = UserResponse.class)))
                             }
                     )
@@ -61,7 +60,7 @@ public class RouterRest {
                     path = "/api/v1/users/{documentNumber}",
                     produces = {"application/json"},
                     method = RequestMethod.GET,
-                    beanClass = Handler.class,
+                    beanClass = UserHandler.class,
                     beanMethod = "listenGetUserByDocumentIdentity",
                     operation = @Operation(
                             operationId = "getUserByDocumentNumber",
@@ -100,8 +99,8 @@ public class RouterRest {
             )
 
     })
-    public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(POST(userPath.getUsers()), userHandler::listenRegisterUser)
-                .andRoute(GET(userPath.getUserByDocumentNumber()), userHandler::listenGetUserByDocumentIdentity);
+    public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
+        return route(POST(userPath.getUsers()), this.userHandler::listenRegisterUser)
+                .andRoute(GET(userPath.getUserByDocumentNumber()), this.userHandler::listenGetUserByDocumentIdentity);
     }
 }

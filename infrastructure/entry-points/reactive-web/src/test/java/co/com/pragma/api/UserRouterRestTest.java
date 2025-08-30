@@ -34,10 +34,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {RouterRest.class, Handler.class, ConfigBeansTest.class, GlobalErrorHandler.class})
-@EnableConfigurationProperties(UserPath.class)
+@ContextConfiguration(classes = {UserRouterRest.class, UserHandler.class, ConfigBeansTest.class, GlobalErrorHandler.class})
+@EnableConfigurationProperties(ConfigBeansTest.class)
 @WebFluxTest
-class RouterRestTest {
+class UserRouterRestTest {
 
     @MockitoBean
     private UserUseCase userUseCase;

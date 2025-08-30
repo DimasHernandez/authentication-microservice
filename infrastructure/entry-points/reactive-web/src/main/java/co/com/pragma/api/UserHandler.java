@@ -18,7 +18,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-public class Handler {
+public class UserHandler {
 
     private final UserUseCase userUseCase;
 

@@ -22,6 +22,8 @@ public class User {
 
     private String email;
 
+    private String passwordHash;
+
     private DocumentType documentType;
 
     private String documentNumber;
@@ -37,6 +39,8 @@ public class User {
     private boolean active;
 
     private LocalDate createdAt;
+
+    private LocalDate lastLoginAt;
 
     private UUID roleId;
 
