@@ -16,6 +16,7 @@ public interface UserMapper {
     @Mapping(target = "active", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "roleId", ignore = true)
+    @Mapping(target = "lastLoginAt", ignore = true)
     @Mapping(target = "documentType", source = "documentType", qualifiedByName = "stringToRolType")
     User toDomain(UserRequest userRequest);
 

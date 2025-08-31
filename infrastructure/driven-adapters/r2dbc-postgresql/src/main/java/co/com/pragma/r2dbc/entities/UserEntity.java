@@ -28,7 +28,7 @@ public class UserEntity {
     private String email;
 
     @Column("password_hash")
-    private String passwordHash;
+    private String password;
 
     @Column("document_type")
     private DocumentType documentType;

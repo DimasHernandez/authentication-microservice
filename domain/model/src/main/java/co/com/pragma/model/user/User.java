@@ -22,7 +22,7 @@ public class User {
 
     private String email;
 
-    private String passwordHash;
+    private String password;
 
     private DocumentType documentType;
 
@@ -50,5 +50,9 @@ public class User {
 
     public void markCreatedNow() {
         this.createdAt = LocalDate.now();
+    }
+
+    public void markLastLoginNow() {
+        this.lastLoginAt = LocalDate.now();
     }
 }

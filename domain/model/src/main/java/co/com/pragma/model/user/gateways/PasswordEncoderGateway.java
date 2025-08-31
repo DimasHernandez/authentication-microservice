@@ -1,8 +1,8 @@
 package co.com.pragma.model.user.gateways;
 
-public interface PasswordEncryptorGateway {
+public interface PasswordEncoderGateway {
 
-    String encryptPassword(String password);
+    String hashPassword(String password);
 
     Boolean matchesPassword(String plainPassword, String hashedPassword);
 }

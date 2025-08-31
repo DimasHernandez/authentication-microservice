@@ -7,6 +7,7 @@ import co.com.pragma.model.rol.enums.RoleType;
 import co.com.pragma.model.rol.gateways.RolRepository;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.gateways.LoggerRepository;
+import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.TransactionalWrapper;
 import co.com.pragma.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class UserUseCase {
 
     private final TransactionalWrapper transactionalWrapper;
 
+    private final PasswordEncoderGateway passwordEncoder;
+
     private final LoggerRepository logger;
 
     public Mono<User> registerUser(User user) {
@@ -32,15 +35,18 @@ public class UserUseCase {
                                 return Mono.error(
                                         new EmailAlreadyRegisteredException("La direccion del correo electronico ya esta registrada."));
                             }
-                            return assignApplicationRoleAndSave(user)
+                            return assignApplicationRoleHashPasswordAndSave(user)
                                     .doOnSuccess(userSaved ->
                                             logger.info("User with id {} registered successfully", userSaved.getId()));
                         }));
     }
 
-    private Mono<User> assignApplicationRoleAndSave(User user) {
+    private Mono<User> assignApplicationRoleHashPasswordAndSave(User user) {
+        String hashPassword = passwordEncoder.hashPassword(user.getPassword());
         user.activate();
+        user.setPassword(hashPassword);
         user.markCreatedNow();
+        user.markLastLoginNow();
 
         return rolRepository
                 .findRoleByName(RoleType.APPLICANT)

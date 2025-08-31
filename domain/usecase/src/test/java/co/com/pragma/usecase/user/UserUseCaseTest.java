@@ -9,6 +9,7 @@ import co.com.pragma.model.rol.gateways.RolRepository;
 import co.com.pragma.model.user.User;
 import co.com.pragma.model.user.enums.DocumentType;
 import co.com.pragma.model.user.gateways.LoggerRepository;
+import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.TransactionalWrapper;
 import co.com.pragma.model.user.gateways.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -36,10 +37,13 @@ class UserUseCaseTest {
     private UserRepository userRepository;
 
     @Mock
-    TransactionalWrapper transactionalWrapper;
+    private TransactionalWrapper transactionalWrapper;
 
     @Mock
-    LoggerRepository loggerRepository;
+    private LoggerRepository loggerRepository;
+
+    @Mock
+    private PasswordEncoderGateway passwordEncoderGateway;
 
     @InjectMocks
     private UserUseCase userUseCase;
@@ -49,6 +53,7 @@ class UserUseCaseTest {
         // Arrange
         User user = userMock();
         Role role = roleMock();
+        String hashedPassword = "$2a$10$qJThGZUTzMb5Axv6kO3Uae99YmE6pC1qfU2puYe3LxXk3uLojSRgu";
 
         // Mock reactive repositories
         when(rolRepository.findRoleByName(any(RoleType.class))).thenReturn(Mono.just(role));
@@ -56,6 +61,7 @@ class UserUseCaseTest {
         when(userRepository.registerUser(any(User.class))).thenReturn(Mono.just(user));
         when(transactionalWrapper.transactional(any(Mono.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
+        when(passwordEncoderGateway.hashPassword(any(String.class))).thenReturn(hashedPassword);
 
         // Act
         Mono<User> result = userUseCase.registerUser(user);
@@ -73,12 +79,14 @@ class UserUseCaseTest {
     void shouldReturnErrorWhenRoleNotFound() {
         // Arrange
         User user = userMock();
+        String hashedPassword = "$2a$10$qJThGZUTzMb5Axv6kO3Uae99YmE6pC1qfU2puYe3LxXk3uLojSRgu";
 
         // Mock reactive repositories
         when(rolRepository.findRoleByName(any(RoleType.class))).thenReturn(Mono.empty());
         when(userRepository.existsUserEmail(any(String.class))).thenReturn(Mono.just(false));
         when(transactionalWrapper.transactional(any(Mono.class)))
                 .thenAnswer(invocationOnMock -> invocationOnMock.getArguments()[0]);
+        when(passwordEncoderGateway.hashPassword(any(String.class))).thenReturn(hashedPassword);
 
         // Act
         Mono<User> result = userUseCase.registerUser(user);
@@ -158,6 +166,7 @@ class UserUseCaseTest {
                 .name("Pepe")
                 .surname("Perez")
                 .email("pepe@gmail.com")
+                .password("test1234")
                 .documentType(DocumentType.DNI)
                 .documentNumber("1234567")
                 .birthDate(LocalDate.now())
