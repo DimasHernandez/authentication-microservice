@@ -84,14 +84,14 @@ public class UserRouterRest {
                                             responseCode = "404",
                                             description = "User not found",
                                             content = @Content(schema = @Schema(
-                                                    example = "{ \"error\": \"Error de negocio\", \"status\": \"404\", \"detail\": \"Usuario no encontrado\" }"
+                                                    example = "{ \"error\": \"Error de negocio\", \"code\": \"USR_004\", \"detail\": \"Usuario no encontrado\" }"
                                             ))
                                     ),
                                     @ApiResponse(
                                             responseCode = "500",
                                             description = "Internal server error",
                                             content = @Content(schema = @Schema(
-                                                    example = "{ \"error\": \"Error interno del servidor\", \"status\": \"500\", \"detail\": \"Failed r2dbc connection\" }"
+                                                    example = "{ \"error\": \"Error interno del servidor\", \"code\": \"GEN_500\", \"detail\": \"Failed r2dbc connection\" }"
                                             ))
                                     )
                             }

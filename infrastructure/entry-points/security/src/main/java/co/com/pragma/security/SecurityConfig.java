@@ -30,7 +30,11 @@ public class SecurityConfig {
                                 .pathMatchers("/api/v1/users/{documentNumber}").hasRole("ADMIN")
                                 .pathMatchers("/api/v1/login").permitAll()
                                 .pathMatchers("/webjars/swagger-ui/index.html").permitAll()
+                                .pathMatchers("/swagger-ui.html").permitAll()
+                                .pathMatchers("/swagger-ui/**").permitAll()
+                                .pathMatchers("/webjars/**").permitAll()
                                 .pathMatchers("/v3/api-docs").permitAll()
+                                .pathMatchers("/v3/api-docs/**").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .build();
