@@ -38,6 +38,4 @@ public class AuthUseCase {
                                                 "Token generado correctamente", user.getEmail(), user.getDocumentNumber()))
                 );
     }
-
-
 }
