@@ -143,7 +143,7 @@ class UserUseCaseTest {
 
     @Test
     void shouldReturnUserNotFoundExceptionFails() {
-        // Arrangle
+        // Arrange
         String documentNumber = "555";
 
         // Mock reactive repository
