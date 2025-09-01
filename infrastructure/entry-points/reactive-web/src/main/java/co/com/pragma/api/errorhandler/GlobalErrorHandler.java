@@ -2,6 +2,7 @@ package co.com.pragma.api.errorhandler;
 
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
+import co.com.pragma.model.exceptions.InvalidCredentialsException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
 import co.com.pragma.model.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -84,6 +85,15 @@ public class GlobalErrorHandler implements WebExceptionHandler {
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.BAD_REQUEST,
                                     false, "IllegalArgumentException")));
+        }
+
+        if (ex instanceof InvalidCredentialsException) {
+            response.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return response.writeWith(
+                    Mono.just(toBuffer(response, VALIDATION_FAILED, HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                                    ex.getMessage()))
+                            .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
+                                    false, "InvalidCredentialsException")));
         }
 
 

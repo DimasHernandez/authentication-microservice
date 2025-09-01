@@ -26,6 +26,8 @@ routes:
   paths:
     users: "/api/v1/users"
     userByDocumentNumber: "/api/v1/users/{documentNumber}"
+    auth:
+      login: "/api/v1/login"
 adapters:
   r2dbc:
     host: "localhost"
@@ -34,3 +36,7 @@ adapters:
     schema: "public"
     username: "admin"
     password: "@admin1"
+security:
+  jwt:
+    secretKey: "VC_ayQoxqq_7BcqwcYplfPc5Au38nbm8Z_u5ReEHVE0="
+    expiration: 900000 # 900000 -> 15 minutes
