@@ -10,4 +10,6 @@ public interface UserRepository {
     Mono<Boolean> existsUserEmail(String email);
 
     Mono<User> getUserByDocumentIdentity(String documentNumber);
+
+    Mono<User> getUserByEmail(String email);
 }

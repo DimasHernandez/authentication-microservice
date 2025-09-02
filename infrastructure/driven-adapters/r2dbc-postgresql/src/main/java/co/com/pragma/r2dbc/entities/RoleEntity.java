@@ -1,8 +1,6 @@
 package co.com.pragma.r2dbc.entities;
 
 import co.com.pragma.model.rol.enums.RoleType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;

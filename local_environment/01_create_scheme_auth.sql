@@ -28,6 +28,7 @@ CREATE TABLE public.users
     name            VARCHAR(100) NOT NULL,
     surname         VARCHAR(100) NOT NULL,
     email           VARCHAR(150) UNIQUE NOT NULL,
+    password_hash   VARCHAR(100) NOT NULL,
     document_type   VARCHAR(20) NOT NULL,
     document_number VARCHAR(50) UNIQUE NOT NULL,
     birth_date      DATE,
@@ -36,6 +37,7 @@ CREATE TABLE public.users
     base_salary     NUMERIC(12,2) NOT NULL,
     is_active       BOOLEAN DEFAULT TRUE,
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_login_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     role_id         UUID,
     CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES public.roles (role_id)
 );

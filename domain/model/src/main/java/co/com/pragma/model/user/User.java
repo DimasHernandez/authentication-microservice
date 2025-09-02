@@ -22,6 +22,8 @@ public class User {
 
     private String email;
 
+    private String password;
+
     private DocumentType documentType;
 
     private String documentNumber;
@@ -38,6 +40,8 @@ public class User {
 
     private LocalDate createdAt;
 
+    private LocalDate lastLoginAt;
+
     private UUID roleId;
 
     public void activate() {
@@ -46,5 +50,9 @@ public class User {
 
     public void markCreatedNow() {
         this.createdAt = LocalDate.now();
+    }
+
+    public void markLastLoginNow() {
+        this.lastLoginAt = LocalDate.now();
     }
 }

@@ -27,6 +27,9 @@ public class UserEntity {
 
     private String email;
 
+    @Column("password_hash")
+    private String password;
+
     @Column("document_type")
     private DocumentType documentType;
 
@@ -47,9 +50,11 @@ public class UserEntity {
     @Column("is_active")
     private boolean isActive;
 
-//    @CreatedDate
     @Column("created_at")
     private LocalDate createdAt;
+
+    @Column("last_login_at")
+    private LocalDate lastLoginAt;
 
     @Column("role_id")
     private UUID roleId;

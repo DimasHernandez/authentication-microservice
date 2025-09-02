@@ -197,3 +197,125 @@ when(transactionalWrapper.transactional(any(Mono.class)))
 
 ```
 De esta forma, las pruebas no dependen del comportamiento transaccional de la base de datos.
+
+# 🔐 Seguridad con JWT en Spring WebFlux
+
+Esta aplicación usa **Spring Security + JWT** para proteger endpoints.  
+El flujo es **stateless**: cada request debe traer su propio `Bearer Token` en el header `Authorization`.
+
+---
+
+## 📂 Clases principales de seguridad
+
+### 1. `JwtAuthenticationManager`
+- Implementa `ReactiveAuthenticationManager`.
+- Valida el token recibido a través del `JwtGateway`.
+- Si es válido:
+    - Extrae datos (`userId`, `email`, `documentNumber`, `role`).
+    - Crea un `JwtAuthenticationToken` con la información del usuario.
+- Si no es válido:
+    - Retorna `Mono.empty()` → la request no está autenticada.
+
+---
+
+### 2. `JwtAuthenticationToken`
+- Extiende `AbstractAuthenticationToken`.
+- Representa a un usuario **ya autenticado**.
+- Contiene:
+    - `userId`, `email`, `documentNumber`, `token`.
+    - Lista de `GrantedAuthority` (roles).
+- `setAuthenticated(true)`.
+
+---
+
+### 3. `JwtPreAuthenticationToken`
+- Extiende `AbstractAuthenticationToken`.
+- Representa el token **crudo recibido del header**.
+- No tiene información del usuario aún.
+- `setAuthenticated(false)`.
+- Es el “boleto de entrada” que se entrega al `AuthenticationManager`.
+
+---
+
+### 4. `JwtSecurityContextRepository`
+- Implementa `ServerSecurityContextRepository`.
+- Se encarga de **cargar** el `SecurityContext` en cada request:
+    1. Extrae el token del header `Authorization: Bearer <token>`.
+    2. Lo convierte en un `JwtPreAuthenticationToken`.
+    3. Llama al `JwtAuthenticationManager` para validarlo.
+    4. Si es válido → crea un `SecurityContextImpl` con el `JwtAuthenticationToken`.
+- El método `save(...)` no se implementa porque la aplicación es **stateless**.
+
+---
+
+### 5. `SecurityConfig`
+- Clase de configuración central.
+- Deshabilita `csrf`, `httpBasic`, `formLogin`.
+- Registra el `JwtAuthenticationManager` y el `JwtSecurityContextRepository`.
+- Define las reglas de acceso:
+  ```java
+  .authorizeExchange(exchanges ->
+      exchanges
+          .pathMatchers("/api/v1/users").hasRole("ADMIN")
+          .pathMatchers("/api/v1/login").permitAll()
+          .anyExchange().authenticated()
+  )
+
+
+### 🔄 Flujo de Autenticación
+[Cliente] --(Request con Bearer Token)--> [Spring Security]
+
+1. JwtSecurityContextRepository.load()
+    - Extrae el token del header.
+    - Crea JwtPreAuthenticationToken(token).
+
+2. JwtAuthenticationManager.authenticate()
+    - Valida el token con JwtGateway.
+    - Si válido → crea JwtAuthenticationToken(userId, email, role, authorities).
+
+3. SecurityContextImpl
+    - Envuelve el JwtAuthenticationToken.
+    - El contexto queda disponible en la request.
+
+4. SecurityWebFilterChain
+    - Verifica si el rol tiene acceso al endpoint.
+
+### ⚖️ Diferencia entre los dos tokens
+
+- JwtPreAuthenticationToken → solo contiene el token crudo, no está autenticado (setAuthenticated(false)).
+
+- JwtAuthenticationToken → contiene los datos reales del usuario, con roles cargados (setAuthenticated(true)).
+
+👉 Pensar así:
+
+- PreAuth = “tengo este papelito, no sé si es válido”.
+
+- Auth = “ok, el papelito es válido, pertenece al usuario X con rol Y”.
+
+### 🚫 ¿Por qué save() no está implementado?
+
+- ServerSecurityContextRepository.save() se usaría en apps con estado (ej. login con sesión).
+
+- Como aquí usamos JWT y el flujo es **stateless**:
+
+  - Cada request viene con su propio token.
+
+  - No necesitamos guardar el contexto en memoria o sesión.
+
+- Por eso el método lanza UnsupportedOperationException.
+
+### 🚫 ¿Por qué deshabilitar csrf, httpBasic y formLogin?
+
+Spring Security trae estos mecanismos habilitados por defecto, pero no los necesitamos:
+
+1. **CSRF**: solo aplica en apps con sesiones y cookies.
+Nuestra API es stateless, cada request trae su JWT.
+
+2. **HTTP Basic Auth**: enviaría usuario/contraseña en cada request.
+ya se está usando JWT.
+
+3. **Form Login**: login HTML con sesiones.
+Aquí el login lo hacemos vía endpoint /api/v1/login que devuelve un JWT.
+
+👉 Al deshabilitarlos nos aseguramos de que el único mecanismo activo sea JWT.
+  
