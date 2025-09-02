@@ -37,10 +37,7 @@ public class JwtProvider implements JwtGateway {
                 .setIssuer("authentication-msvc")
                 .setIssuedAt(issuedAt)
                 .setExpiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
-                .claim("userId", user.getId())
-                .claim("documentNumber", user.getDocumentNumber())
                 .claim("email", user.getEmail())
-                .claim("name", fullName(user.getName(), user.getSurname()))
                 .claim("role", userRole)
                 .signWith(getKey(jwtProperties.getSecretKey()))
                 .compact();
@@ -75,18 +72,8 @@ public class JwtProvider implements JwtGateway {
     }
 
     @Override
-    public String extractUserId(String token) {
-        return extractAllClaims(token).get("userId", String.class);
-    }
-
-    @Override
     public String extractUserEmail(String token) {
         return extractAllClaims(token).get("email", String.class);
-    }
-
-    @Override
-    public String extractUserDocumentNumber(String token) {
-        return extractAllClaims(token).get("documentNumber", String.class);
     }
 
     @Override
@@ -100,10 +87,6 @@ public class JwtProvider implements JwtGateway {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-    }
-
-    private String fullName(String name, String surname) {
-        return String.format("%s %s", name, surname);
     }
 
     private SecretKey getKey(String secretKey) {
