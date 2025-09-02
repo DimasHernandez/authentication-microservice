@@ -12,6 +12,7 @@ public class ConfigBeansTest {
     public UserPath userPathBeanTest() {
         UserPath userPath = new UserPath();
         userPath.setUsers("/api/v1/users");
+        userPath.setUserByDocumentNumber("/api/v1/users/{documentNumber}");
         return userPath;
     }
 }

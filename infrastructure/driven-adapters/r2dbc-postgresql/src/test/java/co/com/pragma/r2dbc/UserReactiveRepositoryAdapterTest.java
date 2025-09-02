@@ -131,6 +131,44 @@ class UserReactiveRepositoryAdapterTest {
                 .verifyComplete();
     }
 
+    @Test
+    void shouldReturnUserGetByDocumentIdentity() {
+        // Arrange
+        String documentNumber = "23456";
+        UserEntity userEntity = userEntityMock();
+        User user = userMock();
+
+        // Mock Reactive repositories
+        when(repository.findByDocumentNumber(any(String.class))).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<User> result = repositoryAdapter.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(userFound ->
+                        userFound.getId().equals(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353")) &&
+                                userFound.getName().equals("Pepe")
+                ).verifyComplete();
+    }
+
+    @Test
+    void shouldReturnEmptyMonoUserGetByDocumentIdentity() {
+        // Arrange
+        String documentNumber = "23456";
+
+        // Mock Reactive repositories
+        when(repository.findByDocumentNumber(any(String.class))).thenReturn(Mono.empty());
+
+        // Act
+        Mono<User> result = repositoryAdapter.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+    }
+
     private User userMock() {
         return User.builder()
                 .id(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353"))
