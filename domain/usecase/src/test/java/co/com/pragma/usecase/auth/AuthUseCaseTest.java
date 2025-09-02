@@ -55,10 +55,9 @@ class AuthUseCaseTest {
         UserCredential userCredential = userCredentialMock();
         User user = userMock();
         Role role = roleMock();
-        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwZXBlQGdtYWlsLmNvbSIsImlzcyI6ImF1dGhlbnRpY2F0aW9uLW1zdmMiLCJpYX" +
-                "QiOjE3NTY3NDIwODYsImV4cCI6MTc1Njc0Mjk4NiwidXNlcklkIjoiNWIwZDBhNmItOWVjMS00YzM4LTliYTQtYTY4NzJjNmY4MTk2I" +
-                "iwiZG9jdW1lbnROdW1iZXIiOiIxMjM0NTY3ODkiLCJlbWFpbCI6InBlcGVAZ21haWwuY29tIiwibmFtZSI6IlBlcGUgUGVyZXoiLCJyb" +
-                "2xlIjoiQVBQTElDQU5UIn0.w6nNNCgQXPPouuGJUEdyv72zy2ouctiK-C0vaRWzD1s";
+        String token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJqdWFuQGdtYWlsLmNvbSIsImlzcyI6ImF1dGhlbnRpY2F0aW9uLW1zdmMiLCJpYX" +
+                "QiOjE3NTY4MzIwODYsImV4cCI6MTc1NjgzMjk4NiwiZW1haWwiOiJqdWFuQGdtYWlsLmNvbSIsInJvbGUiOiJBUFBMSUNBTlQifQ." +
+                "n3U0SZSxNmAZ5MZIcsgOcATBvX5ta0nF6Lm-naz1";
 
         // When reactive repositories
         when(userRepository.getUserByEmail(any(String.class))).thenReturn(Mono.just(user));

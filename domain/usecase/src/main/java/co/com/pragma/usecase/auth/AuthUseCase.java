@@ -34,8 +34,8 @@ public class AuthUseCase {
                                     return new AccessToken(accessToken);
                                 })
                                 .doOnSuccess(token ->
-                                        logger.info("Usuario autenticado: {} (documento: {}) - " +
-                                                "Token generado correctamente", user.getEmail(), user.getDocumentNumber()))
+                                        logger.info("Usuario autenticado: {} " +
+                                                "Token generado correctamente", user.getEmail()))
                 );
     }
 }

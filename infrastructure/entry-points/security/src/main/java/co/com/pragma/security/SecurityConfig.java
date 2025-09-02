@@ -25,19 +25,19 @@ public class SecurityConfig {
                 .authenticationManager(jwtAuthenticationManager)
                 .securityContextRepository(jwtSecurityContextRepository)
                 .authorizeExchange(exchanges ->
-                        exchanges
-                                .pathMatchers("/api/v1/users").hasRole("ADMIN")
-                                .pathMatchers("/api/v1/users/{documentNumber}").hasRole("ADMIN")
-                                .pathMatchers("/api/v1/login").permitAll()
-                                .pathMatchers("/webjars/swagger-ui/index.html").permitAll()
-                                .pathMatchers("/swagger-ui.html").permitAll()
-                                .pathMatchers("/swagger-ui/**").permitAll()
-                                .pathMatchers("/webjars/**").permitAll()
-                                .pathMatchers("/v3/api-docs").permitAll()
-                                .pathMatchers("/v3/api-docs/**").permitAll()
-                                .anyExchange().authenticated()
+                                exchanges
+                                        .pathMatchers("/api/v1/users").hasRole("ADMIN")
+//                                .pathMatchers("/api/v1/users/{documentNumber}").hasRole("SOLICITANT")
+                                        .pathMatchers("/api/v1/users/{documentNumber}").permitAll()
+                                        .pathMatchers("/api/v1/login").permitAll()
+                                        .pathMatchers("/webjars/swagger-ui/index.html").permitAll()
+                                        .pathMatchers("/swagger-ui.html").permitAll()
+                                        .pathMatchers("/swagger-ui/**").permitAll()
+                                        .pathMatchers("/webjars/**").permitAll()
+                                        .pathMatchers("/v3/api-docs").permitAll()
+                                        .pathMatchers("/v3/api-docs/**").permitAll()
+                                        .anyExchange().authenticated()
                 )
                 .build();
-
     }
 }
