@@ -1,7 +1,7 @@
 services:
-  postgres17_db:
+  postgres17_auth_db:
     image: postgres:17
-    container_name: postgres17_db
+    container_name: postgres17_auth_db
     restart: unless-stopped
     environment:
       POSTGRES_DB: "authentication_db"

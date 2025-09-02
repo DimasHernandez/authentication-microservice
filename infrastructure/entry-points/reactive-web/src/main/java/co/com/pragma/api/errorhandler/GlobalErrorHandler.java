@@ -2,6 +2,7 @@ package co.com.pragma.api.errorhandler;
 
 
 import co.com.pragma.model.exceptions.EmailAlreadyRegisteredException;
+import co.com.pragma.model.exceptions.InvalidCredentialsException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
 import co.com.pragma.model.exceptions.UserNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -36,7 +37,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof ConstraintViolationException) {
             response.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY);
             return response.writeWith(
-                    Mono.just(toBuffer(response, VALIDATION_FAILED, HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    Mono.just(toBuffer(response, VALIDATION_FAILED, ErrorCode.FIELD_EMPTY.getCode(),
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
                                     false, "ConstraintViolationException")));
@@ -45,7 +46,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof WebExchangeBindException) {
             response.setStatusCode(HttpStatus.BAD_REQUEST);
             return response.writeWith(
-                    Mono.just(toBuffer(response, VALIDATION_FAILED, HttpStatus.BAD_REQUEST.value(),
+                    Mono.just(toBuffer(response, VALIDATION_FAILED, ErrorCode.BAD_REQUEST.getCode(),
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.BAD_REQUEST,
                                     false, "WebExchangeBindException")));
@@ -54,7 +55,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof EmailAlreadyRegisteredException) {
             response.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY);
             return response.writeWith(
-                    Mono.just(toBuffer(response, BUSINESS_ERROR, HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                    Mono.just(toBuffer(response, BUSINESS_ERROR, ErrorCode.EMAIL_ALREADY_REGISTERED.getCode(),
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
                                     false, "EmailAlreadyRegisteredException")));
@@ -63,7 +64,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof UserNotFoundException) {
             response.setStatusCode(HttpStatus.NOT_FOUND);
             return response.writeWith(
-                    Mono.just(toBuffer(response, BUSINESS_ERROR, HttpStatus.NOT_FOUND.value(), ex.getMessage()))
+                    Mono.just(toBuffer(response, BUSINESS_ERROR, ErrorCode.USER_NOT_FOUND.getCode(), ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.NOT_FOUND,
                                     false, "UserNotFoundException")));
         }
@@ -71,7 +72,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof RoleNotFoundException) {
             response.setStatusCode(HttpStatus.NOT_FOUND);
             return response.writeWith(
-                    Mono.just(toBuffer(response, BUSINESS_ERROR, HttpStatus.NOT_FOUND.value(),
+                    Mono.just(toBuffer(response, BUSINESS_ERROR, ErrorCode.ROLE_NOT_FOUND.getCode(),
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.NOT_FOUND,
                                     false, "RoleNotFoundException")));
@@ -80,10 +81,19 @@ public class GlobalErrorHandler implements WebExceptionHandler {
         if (ex instanceof IllegalArgumentException) {
             response.setStatusCode(HttpStatus.BAD_REQUEST);
             return response.writeWith(
-                    Mono.just(toBuffer(response, VALIDATION_FAILED, HttpStatus.BAD_REQUEST.value(),
+                    Mono.just(toBuffer(response, VALIDATION_FAILED, ErrorCode.BAD_REQUEST.getCode(),
                                     ex.getMessage()))
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.BAD_REQUEST,
                                     false, "IllegalArgumentException")));
+        }
+
+        if (ex instanceof InvalidCredentialsException) {
+            response.setStatusCode(HttpStatus.UNPROCESSABLE_ENTITY);
+            return response.writeWith(
+                    Mono.just(toBuffer(response, VALIDATION_FAILED, ErrorCode.INVALID_CREDENTIALS.getCode(),
+                                    ex.getMessage()))
+                            .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
+                                    false, "InvalidCredentialsException")));
         }
 
 
@@ -94,7 +104,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
             if (message.contains(UNIQUE_DOCUMENT_NUMBER_DB)) {
                 response.setStatusCode(HttpStatus.CONFLICT);
                 return response.writeWith(
-                        Mono.just(toBuffer(response, "Conflict", HttpStatus.CONFLICT.value(),
+                        Mono.just(toBuffer(response, "Conflict", ErrorCode.DOCUMENT_ALREADY_EXISTS.getCode(),
                                         "Documento de identidad ya esta registrado"))
                                 .doOnNext(buffer ->
                                         log.warn("DuplicateKeyException Constrain violation detected: " +
@@ -107,16 +117,16 @@ public class GlobalErrorHandler implements WebExceptionHandler {
 
         response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
         return response.writeWith(
-                Mono.just(toBuffer(response, "Internal error", HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                Mono.just(toBuffer(response, "Internal error", ErrorCode.GENERIC_SERVER_ERROR.getCode(),
                                 ex.getMessage()))
                         .doOnNext(buffer -> logException(exchange, ex, HttpStatus.INTERNAL_SERVER_ERROR,
                                 true, "Internal Server Error")));
     }
 
-    private DataBuffer toBuffer(ServerHttpResponse response, String error, int status, String detail) {
+    private DataBuffer toBuffer(ServerHttpResponse response, String error, String code, String detail) {
         String json = "{"
                 + "\"error\":\"" + error + "\","
-                + "\"status\":\"" + status + "\","
+                + "\"code\":\"" + code + "\","
                 + "\"detail\":\"" + detail + "\""
                 + "}";
         return response.bufferFactory().wrap(json.getBytes(StandardCharsets.UTF_8));

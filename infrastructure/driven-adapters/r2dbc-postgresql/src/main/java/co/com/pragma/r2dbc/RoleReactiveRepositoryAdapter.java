@@ -23,6 +23,11 @@ public class RoleReactiveRepositoryAdapter extends ReactiveAdapterOperations<
     }
 
     @Override
+    public Mono<Role> findRoleById(UUID id) {
+        return super.findById(id);
+    }
+
+    @Override
     public Mono<Role> findRoleByName(RoleType roleType) {
         return repository.findByRoleTypeName(roleType)
                 .map(super::toEntity);
