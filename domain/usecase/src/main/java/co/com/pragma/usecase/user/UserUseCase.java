@@ -62,4 +62,10 @@ public class UserUseCase {
                 .doOnNext(user -> logger.info("User with id {} found successfully", user.getId()))
                 .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")));
     }
+
+    public Mono<User> getUserByEmail(String email) {
+        return userRepository.getUserByEmail(email)
+                .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")))
+                .doOnSuccess(user -> logger.info("User with email {} found successfully", user.getEmail()));
+    }
 }

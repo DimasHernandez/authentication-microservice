@@ -96,11 +96,53 @@ public class UserRouterRest {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/email/{email}",
+                    produces = {"application/json"},
+                    method = RequestMethod.GET,
+                    beanClass = UserHandler.class,
+                    beanMethod = "listenGetUserByEmail",
+                    operation = @Operation(
+                            operationId = "getUserByEmail",
+                            summary = "Get user by email",
+                            description = "Check user via personal email",
+                            parameters = {
+                                    @Parameter(
+                                            name = "email",
+                                            description = "User email to be consulted",
+                                            required = true,
+                                            in = ParameterIn.PATH
+                                    )
+                            },
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "User found",
+                                            content = @Content(schema = @Schema(implementation = UserInfoResponse.class))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "404",
+                                            description = "User not found",
+                                            content = @Content(schema = @Schema(
+                                                    example = "{ \"error\": \"Error de negocio\", \"code\": \"USR_004\", \"detail\": \"Usuario no encontrado\" }"
+                                            ))
+                                    ),
+                                    @ApiResponse(
+                                            responseCode = "500",
+                                            description = "Internal server error",
+                                            content = @Content(schema = @Schema(
+                                                    example = "{ \"error\": \"Error interno del servidor\", \"code\": \"GEN_500\", \"detail\": \"Failed r2dbc connection\" }"
+                                            ))
+                                    )
+                            }
+                    )
             )
 
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
         return route(POST(userPath.getUsers()), this.userHandler::listenRegisterUser)
-                .andRoute(GET(userPath.getUserByDocumentNumber()), this.userHandler::listenGetUserByDocumentIdentity);
+                .andRoute(GET(userPath.getUserByDocumentNumber()), this.userHandler::listenGetUserByDocumentIdentity)
+                .andRoute(GET(userPath.getUserByEmail()), this.userHandler::listenGetUserByEmail);
     }
 }

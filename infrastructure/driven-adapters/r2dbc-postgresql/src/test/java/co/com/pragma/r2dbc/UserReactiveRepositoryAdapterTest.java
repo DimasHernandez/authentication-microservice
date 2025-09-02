@@ -135,7 +135,6 @@ class UserReactiveRepositoryAdapterTest {
     void shouldReturnUserGetByDocumentIdentity() {
         // Arrange
         String documentNumber = "23456";
-        UserEntity userEntity = userEntityMock();
         User user = userMock();
 
         // Mock Reactive repositories
@@ -162,6 +161,43 @@ class UserReactiveRepositoryAdapterTest {
 
         // Act
         Mono<User> result = repositoryAdapter.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectComplete()
+                .verify();
+    }
+
+    @Test
+    void shouldReturnUserGetByEmail() {
+        // Arrange
+        String email = "pepe@gmail.com";
+        User user = userMock();
+
+        // Mock Reactive repositories
+        when(repository.findByEmail(any(String.class))).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<User> result = repositoryAdapter.getUserByEmail(email);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(userFound ->
+                        userFound.getId().equals(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353")) &&
+                                userFound.getName().equals("Pepe")
+                ).verifyComplete();
+    }
+
+    @Test
+    void shouldReturnEmptyMonoUserGetByEmail() {
+        // Arrange
+        String email = "pepe@gmail.com";
+
+        // Mock Reactive repositories
+        when(repository.findByEmail(any(String.class))).thenReturn(Mono.empty());
+
+        // Act
+        Mono<User> result = repositoryAdapter.getUserByEmail(email);
 
         // Assert
         StepVerifier.create(result)
