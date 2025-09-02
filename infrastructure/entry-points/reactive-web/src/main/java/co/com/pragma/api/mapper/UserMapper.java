@@ -1,5 +1,6 @@
 package co.com.pragma.api.mapper;
 
+import co.com.pragma.api.dto.UserInfoResponse;
 import co.com.pragma.api.dto.UserRequest;
 import co.com.pragma.api.dto.UserResponse;
 import co.com.pragma.model.user.User;
@@ -19,6 +20,8 @@ public interface UserMapper {
     User toDomain(UserRequest userRequest);
 
     UserResponse toResponse(User user);
+
+    UserInfoResponse toInfoResponse(User user);
 
     @Named("stringToRolType")
     default DocumentType mapStringToDocumentType(String documentType) {
