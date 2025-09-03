@@ -142,7 +142,7 @@ class UserUseCaseTest {
     }
 
     @Test
-    void shouldReturnUserNotFoundExceptionFails() {
+    void shouldReturnUserNotFoundExceptionByDocumentIdentityFails() {
         // Arrange
         String documentNumber = "555";
 
@@ -151,6 +151,46 @@ class UserUseCaseTest {
 
         // Act
         Mono<User> result = userUseCase.getUserByDocumentIdentity(documentNumber);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectErrorMatches(throwable ->
+                        throwable instanceof UserNotFoundException &&
+                                throwable.getMessage().equals("Usuario no encontrado")
+                ).verify();
+    }
+
+    @Test
+    void shouldReturnUserByEmail() {
+        // Arrangle
+        String email = "pepe@gmail.com";
+        User user = userMock();
+
+        // Mock reactive repository
+        when(userRepository.getUserByEmail(any(String.class))).thenReturn(Mono.just(user));
+
+        // Act
+        Mono<User> result = userUseCase.getUserByEmail(email);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(userFound ->
+                        userFound.getId().equals(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353")) &&
+                                userFound.getName().equals("Pepe") &&
+                                userFound.getEmail().equals("pepe@gmail.com"))
+                .verifyComplete();
+    }
+
+    @Test
+    void shouldReturnUserNotFoundExceptionByEmailFails() {
+        // Arrange
+        String email = "pepe@gmail.com";
+
+        // Mock reactive repository
+        when(userRepository.getUserByEmail(any(String.class))).thenReturn(Mono.empty());
+
+        // Act
+        Mono<User> result = userUseCase.getUserByEmail(email);
 
         // Assert
         StepVerifier.create(result)
