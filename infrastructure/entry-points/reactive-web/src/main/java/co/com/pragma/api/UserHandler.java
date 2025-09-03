@@ -20,6 +20,10 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserHandler {
 
+    private static final String USER_DOCUMENT_NUMBER = "documentNumber";
+
+    private static final String USER_EMAIL = "email";
+
     private final UserUseCase userUseCase;
 
     private final Validator validator;
@@ -46,8 +50,19 @@ public class UserHandler {
     }
 
     public Mono<ServerResponse> listenGetUserByDocumentIdentity(ServerRequest serverRequest) {
-        String documentNumber = serverRequest.pathVariable("documentNumber");
+        String documentNumber = serverRequest.pathVariable(USER_DOCUMENT_NUMBER);
         return userUseCase.getUserByDocumentIdentity(documentNumber)
+                .map(userMapper::toInfoResponse)
+                .flatMap(userInfoResponse ->
+                        ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(userInfoResponse));
+    }
+
+    public Mono<ServerResponse> listenGetUserByEmail(ServerRequest serverRequest) {
+        String email = serverRequest.pathVariable(USER_EMAIL);
+        System.out.println("email: " + email);
+        return userUseCase.getUserByEmail(email)
                 .map(userMapper::toInfoResponse)
                 .flatMap(userInfoResponse ->
                         ServerResponse.ok()
