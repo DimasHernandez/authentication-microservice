@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges ->
                         exchanges
                                 .pathMatchers("/api/v1/login").permitAll()
-                                .pathMatchers("/api/v1/users/email/{email}").permitAll() // <-- aquí
+                                .pathMatchers("/api/v1/users/email/{email}").hasRole("APPLICANT")
                                 .pathMatchers("/api/v1/users").hasRole("ADMIN")
                                 .pathMatchers("/api/v1/users/{documentNumber}").hasRole("APPLICANT")
                                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/webjars/**",
