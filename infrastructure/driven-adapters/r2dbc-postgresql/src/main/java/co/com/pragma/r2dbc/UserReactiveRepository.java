@@ -4,8 +4,10 @@ import co.com.pragma.model.user.User;
 import co.com.pragma.r2dbc.entities.UserEntity;
 import org.springframework.data.repository.query.ReactiveQueryByExampleExecutor;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.UUID;
 
 // TODO: This file is just an example, you should delete or modify it
@@ -16,5 +18,7 @@ public interface UserReactiveRepository extends ReactiveCrudRepository<UserEntit
     Mono<User> findByDocumentNumber(String documentNumber);
 
     Mono<User> findByEmail(String email);
+
+    Flux<User> findByEmailIn(List<String> emails);
 
 }
