@@ -1,9 +1,7 @@
 package co.com.pragma.api;
 
 import co.com.pragma.api.config.UserPath;
-import co.com.pragma.api.dto.UserInfoResponse;
-import co.com.pragma.api.dto.UserRequest;
-import co.com.pragma.api.dto.UserResponse;
+import co.com.pragma.api.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -137,12 +135,34 @@ public class UserRouterRest {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/users/emails/batch",
+                    produces = {"application/json"},
+                    method = RequestMethod.POST,
+                    beanClass = UserHandler.class,
+                    beanMethod = "listenGetUsersByEmailsBatch",
+                    operation = @Operation(
+                            operationId = "Consult users by emails",
+                            summary = "Consult users",
+                            description = "Consult users with basic information.",
+                            tags = {"User"},
+                            requestBody = @RequestBody(
+                                    required = true,
+                                    description = "Consult users",
+                                    content = @Content(schema = @Schema(implementation = EmailRequest.class))
+                            ),
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Consult users successfully",
+                                            content = @Content(schema = @Schema(implementation = UserBasicInfo.class)))
+                            }
+                    )
             )
-
     })
     public RouterFunction<ServerResponse> userRouterFunction(UserHandler userHandler) {
         return route(POST(userPath.getUsers()), this.userHandler::listenRegisterUser)
                 .andRoute(GET(userPath.getUserByDocumentNumber()), this.userHandler::listenGetUserByDocumentIdentity)
-                .andRoute(GET(userPath.getUserByEmail()), this.userHandler::listenGetUserByEmail);
+                .andRoute(GET(userPath.getUserByEmail()), this.userHandler::listenGetUserByEmail)
+                .andRoute(POST(userPath.getUsersByEmails()), this.userHandler::listenGetUsersByEmailsBatch);
     }
 }
