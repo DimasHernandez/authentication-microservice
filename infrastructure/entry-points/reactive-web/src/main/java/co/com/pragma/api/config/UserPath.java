@@ -16,4 +16,6 @@ public class UserPath {
 
     private String userByEmail;
 
+    private String usersByEmails;
+
 }

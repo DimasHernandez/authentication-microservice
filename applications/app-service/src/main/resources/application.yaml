@@ -27,6 +27,7 @@ routes:
     users: "/api/v1/users"
     userByDocumentNumber: "/api/v1/users/{documentNumber}"
     userByEmail: "/api/v1/users/email/{email}"
+    usersByEmails: "/api/v1/users/emails/batch"
     auth:
       login: "/api/v1/login"
 adapters:

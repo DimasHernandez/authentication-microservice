@@ -17,10 +17,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -200,6 +202,26 @@ class UserUseCaseTest {
                 ).verify();
     }
 
+    @Test
+    void shouldReturnUsersByEmailsBatch() {
+        // Arrange
+        List<String> emails = emailsMock();
+
+        // Mock reactive repository
+        when(userRepository.getUsersByEmails(any(List.class))).thenReturn(Flux.just(userMock()));
+
+        // Act
+        Flux<User> result = userUseCase.getUsersByEmails(emails);
+
+        // Assert
+        StepVerifier.create(result)
+                .expectNextMatches(user ->
+                        user.getId().equals(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353")) &&
+                                user.getName().equals("Pepe") &&
+                                user.getEmail().equals("pepe@gmail.com"))
+                .verifyComplete();
+    }
+
     private User userMock() {
         return User.builder()
                 .id(UUID.fromString("cd0aa3bf-628b-4f71-ac8f-93a280176353"))
@@ -225,6 +247,10 @@ class UserUseCaseTest {
                 .roleType(RoleType.APPLICANT)
                 .description("Rol APPLICANT")
                 .build();
+    }
+
+    private List<String> emailsMock() {
+        return List.of("juan@example.com", "pepe@example.com");
     }
 
 }
