@@ -11,7 +11,10 @@ import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
 import co.com.pragma.model.user.gateways.TransactionalWrapper;
 import co.com.pragma.model.user.gateways.UserRepository;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 public class UserUseCase {
@@ -67,5 +70,9 @@ public class UserUseCase {
         return userRepository.getUserByEmail(email)
                 .switchIfEmpty(Mono.error(new UserNotFoundException("Usuario no encontrado")))
                 .doOnSuccess(user -> logger.info("User with email {} found successfully", user.getEmail()));
+    }
+
+    public Flux<User> getUsersByEmails(List<String> emails) {
+        return userRepository.getUsersByEmails(emails);
     }
 }

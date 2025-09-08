@@ -38,6 +38,7 @@ public class SecurityConfig {
                         exchanges
                                 .pathMatchers("/api/v1/login").permitAll()
                                 .pathMatchers("/api/v1/users/email/{email}").hasRole("APPLICANT")
+                                .pathMatchers("/api/v1/users/emails/batch").hasRole("ADMIN")
                                 .pathMatchers("/api/v1/users").hasRole("ADMIN")
                                 .pathMatchers("/api/v1/users/{documentNumber}").hasRole("APPLICANT")
                                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/webjars/**",
@@ -58,7 +59,7 @@ public class SecurityConfig {
             response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
             Map<String, Object> body = new HashMap<>();
-            body.put("status", HttpStatus.UNAUTHORIZED.value());
+            body.put("code", "AUTH_010");
             body.put("error", "No autorizado");
             body.put("message", "No tiene credenciales validas");
 
@@ -77,7 +78,7 @@ public class SecurityConfig {
             response.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
             Map<String, Object> body = new HashMap<>();
-            body.put("status", HttpStatus.FORBIDDEN.value());
+            body.put("code", "AUTH_013");
             body.put("error", "Forbidden");
             body.put("message", "No tienes permisos para acceder a este recurso");
 

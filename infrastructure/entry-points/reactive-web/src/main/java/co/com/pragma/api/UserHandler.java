@@ -1,5 +1,7 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.dto.EmailRequest;
+import co.com.pragma.api.dto.UserBasicInfo;
 import co.com.pragma.api.dto.UserRequest;
 import co.com.pragma.api.mapper.UserMapper;
 import co.com.pragma.usecase.user.UserUseCase;
@@ -11,9 +13,12 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 @Component
@@ -61,7 +66,6 @@ public class UserHandler {
 
     public Mono<ServerResponse> listenGetUserByEmail(ServerRequest serverRequest) {
         String email = serverRequest.pathVariable(USER_EMAIL);
-        System.out.println("email: " + email);
         return userUseCase.getUserByEmail(email)
                 .map(userMapper::toInfoResponse)
                 .flatMap(userInfoResponse ->
@@ -69,4 +73,26 @@ public class UserHandler {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(userInfoResponse));
     }
+
+    public Mono<ServerResponse> listenGetUsersByEmailsBatch(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(EmailRequest.class)
+                .flatMap(emailRequest -> {
+                    if (emailRequest.getEmails().size() > 1000) {
+                        Map<String, Object> error = new HashMap<>();
+                        error.put("error", "Demasiados correos electronicos");
+                        error.put("detail", "El limite máximo es 1000 correos electrónicos por request");
+
+                        return ServerResponse.badRequest()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(error);
+                    }
+                    Flux<UserBasicInfo> usersFlux = userUseCase.getUsersByEmails(emailRequest.getEmails())
+                            .map(userMapper::toBasicInfo);
+
+                    return ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(usersFlux, UserBasicInfo.class);
+                });
+    }
+
 }
