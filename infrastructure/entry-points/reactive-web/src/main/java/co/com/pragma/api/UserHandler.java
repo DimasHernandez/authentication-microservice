@@ -66,7 +66,6 @@ public class UserHandler {
 
     public Mono<ServerResponse> listenGetUserByEmail(ServerRequest serverRequest) {
         String email = serverRequest.pathVariable(USER_EMAIL);
-        System.out.println("email: " + email);
         return userUseCase.getUserByEmail(email)
                 .map(userMapper::toInfoResponse)
                 .flatMap(userInfoResponse ->
