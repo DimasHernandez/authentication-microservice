@@ -1,6 +1,5 @@
 package co.com.pragma.api;
 
-import co.com.pragma.api.config.ConfigBeansTest;
 import co.com.pragma.api.config.UserPath;
 import co.com.pragma.api.dto.UserInfoResponse;
 import co.com.pragma.api.dto.UserRequest;
@@ -19,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.reactive.server.WebTestClient;
@@ -34,9 +34,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ContextConfiguration(classes = {UserRouterRest.class, UserHandler.class, ConfigBeansTest.class, GlobalErrorHandler.class})
-@EnableConfigurationProperties(ConfigBeansTest.class)
+@ContextConfiguration(classes = {UserRouterRest.class, UserHandler.class, GlobalErrorHandler.class})
+@EnableConfigurationProperties(UserPath.class)
 @WebFluxTest
+@ActiveProfiles("test")
 class UserRouterRestTest {
 
     @MockitoBean
@@ -116,7 +117,7 @@ class UserRouterRestTest {
                 .expectBody()
                 .consumeWith(System.out::println)
                 .jsonPath("$.error").isEqualTo("Fallo validacion")
-                .jsonPath("$.status").isEqualTo(422)
+                .jsonPath("$.code").isEqualTo("USR_002")
                 .jsonPath("$.detail").isEqualTo("null: El nombre es obligatorio");
     }
 
@@ -159,7 +160,7 @@ class UserRouterRestTest {
                 .expectBody()
                 .consumeWith(System.out::println)
                 .jsonPath("$.error").isEqualTo("Fallo validacion")
-                .jsonPath("$.status").isEqualTo(422)
+                .jsonPath("$.code").isEqualTo("USR_002")
                 .jsonPath("$.detail").isEqualTo("null: El salario no puede ser superior a 15000000");
     }
 
@@ -198,7 +199,7 @@ class UserRouterRestTest {
                 .expectHeader().contentType(MediaType.APPLICATION_JSON)
                 .expectBody()
                 .jsonPath("$.error").isEqualTo("Error de negocio")
-                .jsonPath("$.status").isEqualTo(404)
+                .jsonPath("$.code").isEqualTo("USR_004")
                 .jsonPath("$.detail").isEqualTo("Usuario no encontrado");
     }
 
