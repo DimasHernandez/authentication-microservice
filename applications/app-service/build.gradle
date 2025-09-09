@@ -1,5 +1,9 @@
 apply plugin: 'org.springframework.boot'
 
+springBoot {
+    mainClass = 'co.com.pragma.MainApplication'
+}
+
 dependencies {
 	implementation project(':security')
 	implementation project(':jwt-adapter')

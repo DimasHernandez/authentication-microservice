@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -43,6 +44,7 @@ public class SecurityConfig {
                                 .pathMatchers("/api/v1/users/{documentNumber}").hasRole("APPLICANT")
                                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/webjars/**",
                                         "/v3/api-docs", "/v3/api-docs/**").permitAll()
+                                .pathMatchers(HttpMethod.GET, "/actuator/health").permitAll()
                                 .anyExchange().authenticated()
                 )
                 .exceptionHandling(ex -> ex
