@@ -39,8 +39,8 @@ public class SecurityConfig {
                         exchanges
                                 .pathMatchers("/api/v1/login").permitAll()
                                 .pathMatchers("/api/v1/users/email/{email}").hasRole("APPLICANT")
-                                .pathMatchers("/api/v1/users/emails/batch").hasRole("ADMIN")
-                                .pathMatchers("/api/v1/users").hasRole("ADMIN")
+                                .pathMatchers(HttpMethod.POST, "/api/v1/users/emails/batch").hasAnyRole("ADMIN", "ADVISOR")
+                                .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISOR")
                                 .pathMatchers("/api/v1/users/{documentNumber}").hasRole("APPLICANT")
                                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/webjars/**",
                                         "/v3/api-docs", "/v3/api-docs/**").permitAll()

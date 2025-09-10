@@ -51,53 +51,53 @@ services:
       - crediya-network
 
   # ---- Authentication-Microservice
-  authentication-msvc:
-    build:
-      context: ./authentication-microservice
-      dockerfile: ../deploy/Dockerfile
-    image: authentication-msvc:latest
-    container_name: authentication-msvc
-    depends_on:
-      - postgres17_auth_db
-    ports:
-      - "8080:8080"
-    environment:
-      - ADAPTERS_R2DBC_HOST=${AUTH_MSVC_DB_HOST}
-      - ADAPTERS_R2DBC_PORT=${AUTH_MSVC_DB_PORT}
-      - ADAPTERS_R2DBC_DATABASE=${AUTH_MSVC_DB_DATABASE}
-      - ADAPTERS_R2DBC_SCHEMA=${AUTH_MSVC_DB_SCHEMA}
-      - ADAPTERS_R2DBC_USERNAME=${AUTH_MSVC_DB_USERNAME}
-      - ADAPTERS_R2DBC_PASSWORD=${AUTH_MSVC_DB_PASSWORD}
-      - SECURITY_JWT_SECRET=${SUPER_SECRET_KEY}
-      - SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION_TIME}
-
-    restart: always
-    networks:
-      - crediya-network
+#  authentication-msvc:
+#    build:
+#      context: ./authentication-microservice
+#      dockerfile: ../deploy/Dockerfile
+#    image: authentication-msvc:latest
+#    container_name: authentication-msvc
+#    depends_on:
+#      - postgres17_auth_db
+#    ports:
+#      - "8080:8080"
+#    environment:
+#      - ADAPTERS_R2DBC_HOST=${AUTH_MSVC_DB_HOST}
+#      - ADAPTERS_R2DBC_PORT=${AUTH_MSVC_DB_PORT}
+#      - ADAPTERS_R2DBC_DATABASE=${AUTH_MSVC_DB_DATABASE}
+#      - ADAPTERS_R2DBC_SCHEMA=${AUTH_MSVC_DB_SCHEMA}
+#      - ADAPTERS_R2DBC_USERNAME=${AUTH_MSVC_DB_USERNAME}
+#      - ADAPTERS_R2DBC_PASSWORD=${AUTH_MSVC_DB_PASSWORD}
+#      - SECURITY_JWT_SECRET=${SUPER_SECRET_KEY}
+#      - SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION_TIME}
+#
+#    restart: always
+#    networks:
+#      - crediya-network
 
   # ---- Loan-Request-Microservice
-  loan-request-msvc:
-    image: request-msvc:latest
-    container_name: loan-request-msvc
-    depends_on:
-      - postgres17_loans_db
-      - authentication-msvc
-    ports:
-      - "9000:9000"
-    environment:
-      - ADAPTERS_R2DBC_HOST=${LOAN_MSVC_DB_HOST}
-      - ADAPTERS_R2DBC_PORT=${LOAN_MSVC_DB_PORT}
-      - ADAPTERS_R2DBC_DATABASE=${LOAN_MSVC_DB_DATABASE}
-      - ADAPTERS_R2DBC_SCHEMA=${LOAN_MSVC_DB_SCHEMA}
-      - ADAPTERS_R2DBC_USERNAME=${LOAN_MSVC_DB_USERNAME}
-      - ADAPTERS_R2DBC_PASSWORD=${LOAN_MSVC_DB_PASSWORD}
-      - SECURITY_JWT_SECRET=${SUPER_SECRET_KEY}
-      - SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION_TIME}
-      - ADAPTER_RESTCONSUMER_URL=${URL_AUTH_MSVC}
-
-    restart: always
-    networks:
-      - crediya-network
+#  loan-request-msvc:
+#    image: request-msvc:latest
+#    container_name: loan-request-msvc
+#    depends_on:
+#      - postgres17_loans_db
+#      - authentication-msvc
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      - ADAPTERS_R2DBC_HOST=${LOAN_MSVC_DB_HOST}
+#      - ADAPTERS_R2DBC_PORT=${LOAN_MSVC_DB_PORT}
+#      - ADAPTERS_R2DBC_DATABASE=${LOAN_MSVC_DB_DATABASE}
+#      - ADAPTERS_R2DBC_SCHEMA=${LOAN_MSVC_DB_SCHEMA}
+#      - ADAPTERS_R2DBC_USERNAME=${LOAN_MSVC_DB_USERNAME}
+#      - ADAPTERS_R2DBC_PASSWORD=${LOAN_MSVC_DB_PASSWORD}
+#      - SECURITY_JWT_SECRET=${SUPER_SECRET_KEY}
+#      - SECURITY_JWT_EXPIRATION=${JWT_EXPIRATION_TIME}
+#      - ADAPTER_RESTCONSUMER_URL=${URL_AUTH_MSVC}
+#
+#    restart: always
+#    networks:
+#      - crediya-network
 
 
 volumes:
