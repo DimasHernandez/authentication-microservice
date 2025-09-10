@@ -32,7 +32,7 @@ routes:
       login: "/api/v1/login"
 adapters:
   r2dbc:
-    host: ${AUTH_MSVC_DB_HOST:postgres17_auth_db}
+    host: ${AUTH_MSVC_DB_HOST:localhost}
     port: ${AUTH_MSVC_DB_PORT:5432}
     database: ${AUTH_MSVC_DB_DATABASE:authentication_db}
     schema: ${AUTH_MSVC_DB_SCHEMA:public}
@@ -41,4 +41,4 @@ adapters:
 security:
   jwt:
     secretKey: ${SUPER_SECRET_KEY:"VC_ayQoxqq_7BcqwcYplfPc5Au38nbm8Z_u5ReEHVE0="}
-    expiration: ${JWT_EXPIRATION:3600}
+    expiration: ${JWT_EXPIRATION:900000}
