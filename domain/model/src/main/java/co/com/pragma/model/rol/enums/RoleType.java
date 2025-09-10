@@ -3,6 +3,7 @@ package co.com.pragma.model.rol.enums;
 public enum RoleType {
 
     APPLICANT("SOLICITANTE", "APPLICANT"),
+    ADVISOR("ASESOR", "ADVISOR"),
     ADMIN("ADMINISTRADOR", "ADMIN");
 
     private final String name;
