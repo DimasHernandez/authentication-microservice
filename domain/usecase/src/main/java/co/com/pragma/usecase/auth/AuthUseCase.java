@@ -5,6 +5,7 @@ import co.com.pragma.model.auth.UserCredential;
 import co.com.pragma.model.auth.gateways.JwtGateway;
 import co.com.pragma.model.exceptions.InvalidCredentialsException;
 import co.com.pragma.model.exceptions.RoleNotFoundException;
+import co.com.pragma.model.exceptions.enums.ErrorMessages;
 import co.com.pragma.model.rol.gateways.RolRepository;
 import co.com.pragma.model.user.gateways.LoggerRepository;
 import co.com.pragma.model.user.gateways.PasswordEncoderGateway;
@@ -23,12 +24,12 @@ public class AuthUseCase {
 
     public Mono<AccessToken> login(UserCredential userCredential) {
         return userRepository.getUserByEmail(userCredential.getEmail())
-                .switchIfEmpty(Mono.error(new InvalidCredentialsException("Correo electronico o contraseña incorrectos")))
+                .switchIfEmpty(Mono.error(new InvalidCredentialsException(ErrorMessages.INVALID_CREDENTIALS.getMessage())))
                 .filter(user -> passwordEncoder.matchesPassword(userCredential.getPassword(), user.getPassword()))
-                .switchIfEmpty(Mono.error(new InvalidCredentialsException("Correo electronico o contraseña incorrectos")))
+                .switchIfEmpty(Mono.error(new InvalidCredentialsException(ErrorMessages.INVALID_CREDENTIALS.getMessage())))
                 .flatMap(user ->
                         roleRepository.findRoleById(user.getRoleId())
-                                .switchIfEmpty(Mono.error(new RoleNotFoundException("Role no encontrado")))
+                                .switchIfEmpty(Mono.error(new RoleNotFoundException(ErrorMessages.ROLE_NOT_FOUND.getMessage())))
                                 .map(role -> {
                                     String accessToken = jwtGateway.generateToken(user, role.getRoleType().getEnglishName());
                                     return new AccessToken(accessToken);
