@@ -132,7 +132,7 @@ class AuthUseCaseTest {
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
                         throwable instanceof RoleNotFoundException &&
-                                throwable.getMessage().equals("Role no encontrado"))
+                                throwable.getMessage().equals("Rol no encontrado"))
                 .verify();
     }
 
