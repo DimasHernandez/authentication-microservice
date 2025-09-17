@@ -2,6 +2,9 @@
 # Edit at https://www.gitignore.io/?templates=java,linux,macos,sonar,gradle,windows,eclipse,sonarqube,sublimetext,intellij+all,visualstudiocode
 
 ### Eclipse ###
+local_environment/.env
+myenv/
+
 .metadata
 bin/
 tmp/
