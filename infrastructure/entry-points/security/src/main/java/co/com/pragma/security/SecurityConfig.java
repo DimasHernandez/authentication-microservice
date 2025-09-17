@@ -1,5 +1,6 @@
 package co.com.pragma.security;
 
+import co.com.pragma.security.enums.Role;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -38,10 +39,10 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges ->
                         exchanges
                                 .pathMatchers("/api/v1/login").permitAll()
-                                .pathMatchers("/api/v1/users/email/{email}").hasRole("APPLICANT")
-                                .pathMatchers(HttpMethod.POST, "/api/v1/users/emails/batch").hasAnyRole("ADMIN", "ADVISOR")
-                                .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole("ADMIN", "ADVISOR")
-                                .pathMatchers("/api/v1/users/{documentNumber}").hasRole("APPLICANT")
+                                .pathMatchers("/api/v1/users/email/{email}").hasRole(Role.APPLICANT.name())
+                                .pathMatchers(HttpMethod.POST, "/api/v1/users/emails/batch").hasAnyRole(Role.ADMIN.name(), Role.ADVISOR.name())
+                                .pathMatchers(HttpMethod.POST, "/api/v1/users").hasAnyRole(Role.ADMIN.name(), Role.ADVISOR.name())
+                                .pathMatchers("/api/v1/users/{documentNumber}").hasRole(Role.APPLICANT.name())
                                 .pathMatchers("/swagger-ui.html", "/swagger-ui/**", "/webjars/**",
                                         "/v3/api-docs", "/v3/api-docs/**").permitAll()
                                 .pathMatchers(HttpMethod.GET, "/actuator/health").permitAll()
