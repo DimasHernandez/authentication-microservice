@@ -3,6 +3,7 @@
 
 ## Environments variables
 /local_environment/.env
+/myenv
 
 ### Eclipse ###
 .metadata
