@@ -96,7 +96,7 @@ public class GlobalErrorHandler implements WebExceptionHandler {
                             .doOnNext(buffer -> logException(exchange, ex, HttpStatus.UNPROCESSABLE_ENTITY,
                                     false, "InvalidCredentialsException")));
         }
-
+      
 
         if (ex instanceof RuntimeException r) {
             String message = r.getMessage() != null ? r.getMessage() : "";

@@ -56,6 +56,14 @@ La documentación del API se genera automáticamente con **springdoc-openapi**.
 - **OpenAPI JSON (especificación en formato JSON):**  
   👉 [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
 
+## 📖 Diagramas de secuencia y de infraestuctura de AWS
+- HU-07 -> Agregar al sistema prestamo con validación automatica
+    ![img.png](img.png)
+- HU-08-09 -> Mostrar Cantidad de prestamos Y Mostrar Monto total de prestamo
+    ![img_1.png](img_1.png)
+- HU-10 -> Despliegue de la solución
+    ![img_2.png](img_2.png)
+
 ## Notas Importantes
 ### 📌 Inyección de beans en los casos de uso (Clean Architecture + Plugin Bancolombia)
 En el enfoque de **Arquitectura Limpia** con el plugin de Bancolombia, los **casos de uso** (capa usecase) deben permanecer independientes de frameworks (Spring, R2DBC, etc). Esto significa que no podemos inyectar directamente beans del framework, como TransactionalOperator o R2dbcEntityTemplate.
