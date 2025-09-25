@@ -97,7 +97,6 @@ public class GlobalErrorHandler implements WebExceptionHandler {
                                     false, "InvalidCredentialsException")));
         }
 
-
         if (ex instanceof RuntimeException r) {
             String message = r.getMessage() != null ? r.getMessage() : "";
 

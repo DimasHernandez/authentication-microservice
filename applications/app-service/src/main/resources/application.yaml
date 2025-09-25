@@ -38,6 +38,7 @@ adapters:
     schema: ${AUTH_MSVC_DB_SCHEMA:public}
     username: ${AUTH_MSVC_DB_USERNAME:admin}
     password: ${AUTH_MSVC_DB_PASSWORD:@admin1}
+    sslMode: ${AUTH_MSVC_DB_SSLMODE:disable}
 security:
   jwt:
     secretKey: ${SUPER_SECRET_KEY:"VC_ayQoxqq_7BcqwcYplfPc5Au38nbm8Z_u5ReEHVE0="}
