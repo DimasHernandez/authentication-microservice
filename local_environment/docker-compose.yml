@@ -135,7 +135,6 @@ services:
     networks:
       - crediya-network
 
-
 volumes:
   postgres17_auth_db:
   postgrest17_loans_db_vol:

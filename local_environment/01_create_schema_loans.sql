@@ -145,3 +145,5 @@ CREATE OR REPLACE TRIGGER trg_update_debt_update
 AFTER UPDATE ON loan_applications
                     FOR EACH ROW
                     EXECUTE FUNCTION update_total_debt_on_update();
+
+CREATE INDEX idx_loan_app_email ON public.loan_applications (email);
