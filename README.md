@@ -1,3 +1,10 @@
+# Enunciado e Historias de Usuario Del Reto Bootcamp 
+## Proyecto "CrediYa"
+
+- **Información**:
+https://docs.google.com/spreadsheets/d/1CUuskO2iTXHTEY2jRpdQ8SKzHrS9VUxlZGPjsvWRPDY/edit?gid=1479050755#gid=1479050755
+
+
 # Proyecto Base Implementando Clean Architecture
 
 ## Antes de Iniciar
